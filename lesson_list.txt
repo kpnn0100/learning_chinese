@@ -1,0 +1,5 @@
+Choose english from chinese : lesson/choose_answer.py -a
+Choose chinese from english : lesson/choose_answer.py -b
+Combination : lesson/choose_answer.py -c
+Move to next lesson : lesson/kanjitool.py -n
+Move to previous lesson : lesson/kanjitool.py -p
