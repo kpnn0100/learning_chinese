@@ -15,15 +15,17 @@ def getShuffledKanjiDataFrame(hsk=1):
         hsk = 1
     if hsk>6:
         hsk = 6
-    df = pd.DataFrame()
-    for i in range(1,hsk):
+    dfs = []  # list to hold DataFrames
+    for i in range(1,hsk+1):
         csv_path = os.path.join(os.path.dirname(current_path), '..', 'resource', f'{prefix}{i}.csv')
-        df.append(pd.read_csv(csv_path))
+        dfs.append(pd.read_csv(csv_path)) 
+    df = pd.concat(dfs, ignore_index=True)
     # Shuffle the DataFrame with a fixed seed
     shuffled_df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 
     return shuffled_df
 def getWordRange(start, end):
+    print(f"getWordRange: {start} to {end}")
     df = getShuffledKanjiDataFrame()
     selected_words = df.iloc[start:end]
     return selected_words
@@ -35,11 +37,6 @@ def getTodayWords(learning_rate):
     else:
         with open(index_file, "r") as file:
             number = int(file.read())
-    if args.increment:
-        number += 1
-        with open(index_file, "w") as file:
-            file.write(str(number))
-        exit()
     start = number * learning_rate
     end = start + learning_rate
     selected_words = getWordRange(start, end)
@@ -71,6 +68,9 @@ def getOldWords(learning_rate):
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--increment", action="store_true", help="Increment the index by 1")
 parser.add_argument("-p", "--decrement", action="store_true", help="Decrement the index by 1")
+parser.add_argument("-a", "--a", action="store_true", help="Choose english from chinese")
+parser.add_argument("-b", "--b", action="store_true", help="Choose chinese from english")
+parser.add_argument("-c", "--c", action="store_true", help="Combination")
 parser.add_argument("-hsk", "--hsk", type=int, default=1, help="Number of words to learn per session")
 args = parser.parse_args()
 
@@ -104,4 +104,3 @@ if args.decrement:
     print(f"lesson {number}")
     with open(index_file, "w") as file:
         file.write(str(number))
-exit()

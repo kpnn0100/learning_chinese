@@ -9,7 +9,6 @@ parser.add_argument("-a", "--a", action="store_true", help="Choose english from 
 parser.add_argument("-b", "--b", action="store_true", help="Choose chinese from english")
 parser.add_argument("-c", "--c", action="store_true", help="Combination")
 args = parser.parse_args()
-
 from kanjitool import getShuffledKanjiDataFrame, getTodayWords
 today_word_list = getTodayWords(learning_rate)
 all_word_list = getShuffledKanjiDataFrame()
