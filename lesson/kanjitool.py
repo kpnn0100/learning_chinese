@@ -4,13 +4,21 @@ import argparse
 # Create a sample DataFrame
 # Get the current file path
 index_file = os.path.join(os.path.dirname(__file__), "index.txt")
+hsk_level_file = os.path.join(os.path.dirname(__file__), "hsk.txt")
 current_path = os.path.abspath(__file__)
-
+hsk_level =1
 # Get the relative path to the CSV file
-csv_path = os.path.join(os.path.dirname(current_path), '..', 'resource', 'hsk1.csv')
-def getShuffledKanjiDataFrame():
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(csv_path)
+csv_path = os.path.join(os.path.dirname(current_path), '..', 'resource')
+prefix = "hsk"
+def getShuffledKanjiDataFrame(hsk=1):
+    if hsk <1:
+        hsk = 1
+    if hsk>6:
+        hsk = 6
+    df = pd.DataFrame()
+    for i in range(1,hsk):
+        csv_path = os.path.join(os.path.dirname(current_path), '..', 'resource', f'{prefix}{i}.csv')
+        df.append(pd.read_csv(csv_path))
     # Shuffle the DataFrame with a fixed seed
     shuffled_df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 
@@ -63,10 +71,21 @@ def getOldWords(learning_rate):
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--increment", action="store_true", help="Increment the index by 1")
 parser.add_argument("-p", "--decrement", action="store_true", help="Decrement the index by 1")
-parser.add_argument("-a", "--a", action="store_true", help="Choose english from chinese")
-parser.add_argument("-b", "--b", action="store_true", help="Choose chinese from english")
-parser.add_argument("-c", "--c", action="store_true", help="Combination")
+parser.add_argument("-hsk", "--hsk", type=int, default=1, help="Number of words to learn per session")
 args = parser.parse_args()
+
+if not os.path.exists(hsk_level_file):
+    with open(hsk_level_file, "w") as file:
+        file.write("1")
+        hsk_level = 1
+else:
+    with open(hsk_level_file, "r") as file:
+        hsk_level = int(file.read())
+if args.hsk:
+    hsk_level = args.hsk
+    with open(hsk_level_file, "w") as file:
+        file.write(str(hsk_level))
+
 if not os.path.exists(index_file):
     with open(index_file, "w") as file:
         file.write("0")
@@ -85,3 +104,4 @@ if args.decrement:
     print(f"lesson {number}")
     with open(index_file, "w") as file:
         file.write(str(number))
+exit()

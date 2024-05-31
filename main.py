@@ -17,7 +17,8 @@ def load_menu_options(file_path):
     menu_options = []
     with open(file_path, 'r') as file:
         for line in file:
-            name, path = map(str.strip, line.split(':'))
+            name, *path = map(str.strip, line.split(':'))
+            path = path[0] if path else ""
             menu_options.append((name, path))
     return menu_options
 
@@ -32,6 +33,10 @@ def main():
 
         try:
             tool_number = int(choice)
+            if menu_options[tool_number - 1][0] == 'Choose hsk':
+                hsk = input("Enter the hsk level you want to study: ")
+                execute_tool("lesson/kanjitool.py -hsk " + f" {hsk}")
+                continue
             if 1 <= tool_number <= len(menu_options) + 1:
                 selected_tool = menu_options[tool_number - 1][1]
                 execute_tool(selected_tool)
